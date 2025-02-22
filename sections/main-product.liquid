@@ -15,6 +15,7 @@
   {{ 'component-slider.css' | asset_url | stylesheet_tag }}
   {{ 'component-rating.css' | asset_url | stylesheet_tag }}
   {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+  {{ 'custom.css' | asset_url | stylesheet_tag }}
 
   {% unless product.has_only_default_variant %}
     {{ 'component-product-variant-picker.css' | asset_url | stylesheet_tag }}
@@ -204,7 +205,7 @@
                   role="status"
                   {{ block.shopify_attributes }}
                 >
-                  <span class="visually-hidden">{{ 'products.product.sku' | t }}:</span>
+                  <span>{{ 'products.product.sku' | t }}:</span>&nbsp;
                   {{- product.selected_or_first_available_variant.sku -}}
                 </p>
               {%- when 'custom_liquid' -%}
@@ -222,8 +223,64 @@
                       {{- 'icon-caret.svg' | inline_asset_content -}}
                     </summary>
                     <div class="accordion__content rte" id="ProductAccordion-{{ block.id }}-{{ section.id }}">
-                      {{ block.settings.content }}
-                      {{ block.settings.page.content }}
+                      {%- if block.settings.use_liquid -%}
+                        {% assign metafields = product.metafields.custom %}
+
+                        {% if metafields.material != blank %}
+                          <li>Material: {{ metafields.material.value }}</li>
+                        {% endif %}
+
+                        {% if metafields.color != blank %}
+                          <li>Color: {{ metafields.color.value }}</li>
+                        {% endif %}
+
+                        {% if metafields.size != blank %}
+                          <li>Size: {{ metafields.size.value }}</li>
+                        {% endif %}
+
+                        {% if metafields.diameter != blank %}
+                          <li>Diameter: {{ metafields.diameter.value }}</li>
+                        {% endif %}
+
+                        {% if metafields.volume != blank %}
+                          <li>Volume: {{ metafields.volume.value }}</li>
+                        {% endif %}
+
+                        {% if metafields.pieces_in_set != blank %}
+                          <li>Pieces in set: {{ metafields.pieces_in_set.value }}</li>
+                        {% endif %}
+
+                        {% if metafields.microwaveable_safe != blank %}
+                          <li class="microwaveable_safe">
+                            {% if metafields.microwaveable_safe.value.image %}
+                              <img
+                                class="microwaveable_safe_img"
+                                src="{{ metafields.microwaveable_safe.value.image.value | img_url: 'master' }}"
+                                alt="Icon"
+                              >
+                            {% endif %}
+                            {{ metafields.microwaveable_safe.value.text }}
+                          </li>
+                        {% endif %}
+
+                        {% if metafields.dishwasher_safe != blank %}
+                          <li class="dishwasher_safe">
+                            {% if metafields.dishwasher_safe.value.image %}
+                              <img
+                                class="dishwasher_safe_img"
+                                src="{{ metafields.dishwasher_safe.value.image.value | img_url: 'master' }}"
+                                alt="Icon"
+                              >
+                            {% endif %}
+                            {{ metafields.dishwasher_safe.value.text }}
+                          </li>
+                        {% endif %}
+
+
+                      {%- else -%}
+                        {{ block.settings.content }}
+                        {{ block.settings.page.content }}
+                      {%- endif -%}
                     </div>
                   </details>
                 </div>
@@ -1147,6 +1204,12 @@
           ],
           "default": "check_mark",
           "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "use_liquid",
+          "label": "Use Liquid",
+          "default": false
         },
         {
           "type": "richtext",

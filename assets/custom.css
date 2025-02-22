@@ -1,0 +1,18 @@
+.microwaveable_safe_img, .dishwasher_safe_img{
+    margin-bottom: 0 !important;
+    width: 20px;
+    border: 0 !important;
+}
+
+.microwaveable_safe, .dishwasher_safe{
+    display: flex;
+    gap: 8px;
+}
+
+.product__accordion .rte * {
+    font-family: "FuturaCyrillicMedium", sans-serif;
+}
+
+.accordion__title {
+    font-size: 15px;
+}
